@@ -48,7 +48,7 @@ public class UserController {
     }
 
     @PutMapping("/users/{userId}")
-    public String putMethodName(@PathVariable Long userId, @RequestBody Users modificacio) {
+    public String postUser(@PathVariable Long userId, @RequestBody Users modificacio) {
         return "a";
     }
     

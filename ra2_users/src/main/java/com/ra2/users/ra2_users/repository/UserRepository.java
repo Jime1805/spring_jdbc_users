@@ -48,4 +48,8 @@ public class UserRepository {
         String sql = "Select * from users where id = ?";
         return jdbcTemplate.query(sql, new UsersRowMapper(), id);
     }
+
+    public boolean updateUser(){
+        String sql = "";
+    }
 }
