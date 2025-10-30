@@ -14,8 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-
-
+import org.springframework.web.bind.annotation.PutMapping;
 
 
 @RestController
@@ -31,8 +30,12 @@ public class UserController {
     }
 
     @GetMapping("/users")
-    public List<Users> getAllUsers() {
-        return userRepository.findAll();
+    public ResponseEntity<List<Users>> getAllUsers() {
+        List<Users> usuarios = userRepository.findAll();
+        if (usuarios == null || usuarios.isEmpty()){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(usuarios);
     }
     
     @GetMapping("/users/{userId}")
@@ -42,6 +45,11 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         } 
         return ResponseEntity.status(HttpStatus.OK).body(usuario.get(0));
+    }
+
+    @PutMapping("/users/{userId}")
+    public String putMethodName(@PathVariable Long userId, @RequestBody Users modificacio) {
+        return "a";
     }
     
 }
