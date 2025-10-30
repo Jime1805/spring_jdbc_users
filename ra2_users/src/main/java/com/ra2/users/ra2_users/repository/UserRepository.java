@@ -26,6 +26,9 @@ public class UserRepository {
             user.setDescripcion(rs.getString("descripcion"));
             user.setEmail(rs.getString("email"));
             user.setContrasenya(rs.getString("contrasenya"));
+            user.setUltimAcces(rs.getTimestamp("ultimAcces"));
+            user.setDataCreated(rs.getTimestamp("dataCreated"));
+            user.setDataUpdated(rs.getTimestamp("dataUpdated"));
             return user;
         }    
     }
