@@ -17,9 +17,6 @@ public class UserRepository {
     @Autowired
     JdbcTemplate jdbcTemplate;
 
-    
-
-
     public static final class UsersRowMapper implements RowMapper<Users>{
         @Override
         public Users mapRow(ResultSet rs, int rowNum) throws SQLException{
@@ -33,15 +30,19 @@ public class UserRepository {
         }    
     }
     
-
     public int save(Users users){
         String sql = "insert into users (name, description, email, password, ultimAcces, dataCreated, dataUpdated) values (?, ?, ?, ?, ?, ?, ?)";
-        int numReg = jdbcTemplate.update(sql, users.getNom(), users.getDescripcion(), users.getEmail(), users.getContrasenya(), users.getUltimAcces(), LocalDate.now(), LocalDate.now());
+        int numReg = jdbcTemplate.update(sql, users.getNom(), users.getDescripcion(), users.getEmail(), users.getContrasenya(), null, LocalDate.now(), LocalDate.now());
         return numReg;
     }
 
     public List<Users> findAll(){
         String sql = "Select * from users";
+        return jdbcTemplate.query(sql, new UsersRowMapper());
+    }
+
+    public List<Users> findUserById(Long id){
+        String sql = "Select * from users where id = ?";
         return jdbcTemplate.query(sql, new UsersRowMapper());
     }
 }
