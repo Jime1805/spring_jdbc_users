@@ -22,7 +22,7 @@ public class UserRepository {
         public Users mapRow(ResultSet rs, int rowNum) throws SQLException{
             Users user = new Users();
             user.setId(rs.getLong("id"));
-            user.setNom(rs.getString("name"));
+            user.setNom(rs.getString("nom"));
             user.setDescripcion(rs.getString("descripcion"));
             user.setEmail(rs.getString("email"));
             user.setContrasenya(rs.getString("contrasenya"));
@@ -31,7 +31,7 @@ public class UserRepository {
     }
     
     public int save(Users users){
-        String sql = "insert into users (name, description, email, password, ultimAcces, dataCreated, dataUpdated) values (?, ?, ?, ?, ?, ?, ?)";
+        String sql = "insert into users (nom, descripcion, email, contrasenya, ultimAcces, dataCreated, dataUpdated) values (?, ?, ?, ?, ?, ?, ?)";
         int numReg = jdbcTemplate.update(sql, users.getNom(), users.getDescripcion(), users.getEmail(), users.getContrasenya(), null, LocalDate.now(), LocalDate.now());
         return numReg;
     }
@@ -43,6 +43,6 @@ public class UserRepository {
 
     public List<Users> findUserById(Long id){
         String sql = "Select * from users where id = ?";
-        return jdbcTemplate.query(sql, new UsersRowMapper());
+        return jdbcTemplate.query(sql, new UsersRowMapper(), id);
     }
 }

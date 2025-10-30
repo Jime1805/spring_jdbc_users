@@ -1,6 +1,6 @@
 package com.ra2.users.ra2_users.model;
 
-import java.security.Timestamp;
+import java.sql.Timestamp;
 
 public class Users {
     private Long id;
