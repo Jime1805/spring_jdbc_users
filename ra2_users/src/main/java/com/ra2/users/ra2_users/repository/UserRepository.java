@@ -1,8 +1,10 @@
 package com.ra2.users.ra2_users.repository;
 
+import java.sql.Timestamp;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +37,8 @@ public class UserRepository {
     
     public int save(Users users){
         String sql = "insert into users (nom, descripcion, email, contrasenya, ultimAcces, dataCreated, dataUpdated) values (?, ?, ?, ?, ?, ?, ?)";
-        int numReg = jdbcTemplate.update(sql, users.getNom(), users.getDescripcion(), users.getEmail(), users.getContrasenya(), null, LocalDate.now(), LocalDate.now());
+        Timestamp now = Timestamp.valueOf(LocalDateTime.now());
+        int numReg = jdbcTemplate.update(sql, users.getNom(), users.getDescripcion(), users.getEmail(), users.getContrasenya(), null, now, now);
         return numReg;
     }
 
@@ -49,7 +52,20 @@ public class UserRepository {
         return jdbcTemplate.query(sql, new UsersRowMapper(), id);
     }
 
-    public boolean updateUser(){
-        String sql = "";
+    public int updateUser(Long id, Users user){
+        String sql = "UPDATE users SET nom = ?, descripcion = ?, email = ?, contrasenya = ?, dataUpdated = ? WHERE id = ?";
+        Timestamp now = Timestamp.valueOf(LocalDateTime.now());
+        return jdbcTemplate.update(sql, user.getNom(), user.getDescripcion(), user.getEmail(), user.getContrasenya(), now, id );
+    }
+
+    public int updateUserName(Long id, String nom){
+        String sql = "UPDATE users SET nom = ?, dataUpdated = ? WHERE id = ?";
+        Timestamp now = Timestamp.valueOf(LocalDateTime.now());
+        return jdbcTemplate.update(sql, nom, now, id);
+    }
+
+    public int deleteUser(Long id){
+        String sql = "DELETE FROM users WHERE id = ?";
+        return jdbcTemplate.update(sql, id);
     }
 }
