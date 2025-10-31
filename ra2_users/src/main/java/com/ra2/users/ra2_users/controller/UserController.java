@@ -84,7 +84,7 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario amb id " + userId + " no trobat.");
         }
 
-        return ResponseEntity.status(HttpStatus.OK).body("Usuari amb id " + userId + " creat correctament.");
+        return ResponseEntity.status(HttpStatus.OK).body("Usuari amb id " + userId + " eliminat correctament.");
     }
     
 }
