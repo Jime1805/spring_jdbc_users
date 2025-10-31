@@ -27,7 +27,7 @@ public class UserController {
     @Autowired
     UserRepository userRepository;
 
-    @PostMapping("/users")
+    @PostMapping("/users") // localhost:8082/users {Estructura JSON}
     public ResponseEntity<String> postUser(@RequestBody Users user) {
         int usuario = userRepository.save(user);
         if(usuario == 0){
@@ -45,7 +45,7 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(usuarios);
     }
     
-    @GetMapping("/users/{userId}")
+    @GetMapping("/users/{userId}") // localhost:8082/users/1
     public ResponseEntity<Users> findUser(@PathVariable Long userId) {
         List<Users> usuario = userRepository.findUserById(userId);
         if (usuario == null || usuario.isEmpty()){
@@ -54,7 +54,7 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(usuario.get(0));
     }
 
-    @PutMapping("/users/{userId}")
+    @PutMapping("/users/{userId}") // localhost:8082/users/1 {Estructura JSOn}
     public ResponseEntity<String> postUser(@PathVariable Long userId, @RequestBody Users modificacio) {
         int updated = userRepository.updateUser(userId, modificacio);
 
@@ -64,7 +64,7 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body("Usuari amb id: " + userId + " actualitzat correctament.");
     }
 
-    @PatchMapping("/users/{userId}/nom")
+    @PatchMapping("/users/{userId}/nom") // localhost:8082/api/users/1/nom?nom=nouNom
     public ResponseEntity<Users> updateUserName(@PathVariable Long userId, @RequestParam String nom){
         int updated = userRepository.updateUserName(userId, nom);
 
@@ -76,7 +76,7 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(updatUsers);
     }
 
-    @DeleteMapping("/users/{userId}")
+    @DeleteMapping("/users/{userId}") // localhost:8082/users/1
     public ResponseEntity<String> deleteUsers(@PathVariable Long userId){
         int usuario = userRepository.deleteUser(userId);
 
