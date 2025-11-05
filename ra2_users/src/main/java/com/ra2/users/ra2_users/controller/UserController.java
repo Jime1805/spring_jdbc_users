@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.ra2.users.ra2_users.model.Users;
 import com.ra2.users.ra2_users.repository.UserRepository;
@@ -37,6 +38,16 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Usuari no creat");
         }
         return ResponseEntity.status(HttpStatus.OK).body("Usuari creat amb èxit: " + user.getNom());
+    }
+
+    @PostMapping("/users/{id}/image")
+    public ResponseEntity<String> postUsersImage(@PathVariable Long id, @RequestParam MultipartFile imageFile) {
+        List<Users> user =  userService.uploadImage(id, imageFile);
+
+        if(user == null){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al trobar l'usuari.");
+        }
+        return ResponseEntity.status(HttpStatus.OK).body("Usuari creat amb èxit.");
     }
 
     @GetMapping("/users")
