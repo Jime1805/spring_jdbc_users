@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ra2.users.ra2_users.model.Users;
 import com.ra2.users.ra2_users.repository.UserRepository;
+import com.ra2.users.ra2_users.service.UserService;
+
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -24,8 +26,9 @@ import org.springframework.web.bind.annotation.PutMapping;
 @RestController
 @RequestMapping("/api")
 public class UserController {
+
     @Autowired
-    UserRepository userRepository;
+    UserService userService;
 
     @PostMapping("/users") // localhost:8082/users {Estructura JSON}
     public ResponseEntity<String> postUser(@RequestBody Users user) {
@@ -38,7 +41,7 @@ public class UserController {
 
     @GetMapping("/users")
     public ResponseEntity<List<Users>> getAllUsers() {
-        List<Users> usuarios = userRepository.findAll();
+        List<Users> usuarios = userService.getAllUsers();
         if (usuarios == null || usuarios.isEmpty()){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
