@@ -3,7 +3,6 @@ package com.ra2.users.ra2_users.repository;
 import java.sql.Timestamp;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
