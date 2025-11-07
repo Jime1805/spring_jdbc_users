@@ -8,6 +8,7 @@ public class Users {
     private String descripcion;
     private String email;
     private String contrasenya;
+    private String image_path;
     private Timestamp ultimAcces;
     private Timestamp dataCreated;
     private Timestamp dataUpdated;
@@ -15,13 +16,13 @@ public class Users {
     public Users() {
     }
 
-    public Users(Long id, String nom, String descripcion, String email, String contrasenya, Timestamp ultimAcces,
-            Timestamp dataCreated, Timestamp dataUpdated) {
+    public Users(Long id, String nom, String descripcion, String email, String contrasenya, String image_path, Timestamp ultimAcces, Timestamp dataCreated, Timestamp dataUpdated) {
         this.id = id;
         this.nom = nom;
         this.descripcion = descripcion;
         this.email = email;
         this.contrasenya = contrasenya;
+        this.image_path = image_path;
         this.ultimAcces = ultimAcces;
         this.dataCreated = dataCreated;
         this.dataUpdated = dataUpdated;
@@ -90,6 +91,13 @@ public class Users {
     public void setDataUpdated(Timestamp dataUpdated) {
         this.dataUpdated = dataUpdated;
     }
-    
+
+    public String getImage_path() {
+        return image_path;
+    }
+
+    public void setImage_path(String image_path) {
+        this.image_path = image_path;
+    }
     
 }

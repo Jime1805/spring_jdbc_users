@@ -45,7 +45,7 @@ public class UserController {
         if(user == null){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al trobar l'usuari.");
         }
-        return ResponseEntity.status(HttpStatus.OK).body("Usuari creat amb èxit.");
+        return ResponseEntity.status(HttpStatus.OK).body("Imatge pujada amb èxit.");
     }
 
     @GetMapping("/users")

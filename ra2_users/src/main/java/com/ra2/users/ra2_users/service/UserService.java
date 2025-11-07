@@ -1,5 +1,9 @@
 package com.ra2.users.ra2_users.service;
 
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,11 +34,6 @@ public class UserService {
         return usuario;
     }
 
-    public List<Users> uploadingImage(Long id, MultipartFile imageFile){
-        List<Users> user = userRepository.findUserById(id);
-        return user;
-    }
-
     public int updating(Long userId, Users modificacio){
         int updated = userRepository.updateUser(userId, modificacio);
         return updated;
@@ -48,5 +47,21 @@ public class UserService {
     public int deletingUser(Long userId){
         int usuario = userRepository.deleteUser(userId);
         return usuario;
+    }
+    
+    public List<Users> uploadingImage(Long id, MultipartFile imageFile){
+        List<Users> user = userRepository.findUserById(id);
+        if(user == null){
+            return null;
+        }
+
+        Path imagesDir = Paths.get("src/main/resources/public/images");
+
+        if(!Files.exists(imagesDir)){
+            Files.createDirectories(imagesDir);
+        }      
+
+        int numReg = userRepository.updateUserImagePath(id, imageFile);
+        return user;
     }
 }

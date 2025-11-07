@@ -27,6 +27,7 @@ public class UserRepository {
             user.setDescripcion(rs.getString("descripcion"));
             user.setEmail(rs.getString("email"));
             user.setContrasenya(rs.getString("contrasenya"));
+            user.setImage_path(rs.getString("image_path"));
             user.setUltimAcces(rs.getTimestamp("ultimAcces"));
             user.setDataCreated(rs.getTimestamp("dataCreated"));
             user.setDataUpdated(rs.getTimestamp("dataUpdated"));
@@ -66,5 +67,11 @@ public class UserRepository {
     public int deleteUser(Long id){
         String sql = "DELETE FROM users WHERE id = ?";
         return jdbcTemplate.update(sql, id);
+    }
+
+    public int updateUserImagePath(Long id, String imagePath){
+        String sql = "UPDATE users SET image_path = ?, dataUpdated = ?, WHERE id = ?";
+        Timestamp now = Timestamp.valueOf(LocalDateTime.now());
+        return jdbcTemplate.update(sql, imagePath, now, id);
     }
 }
