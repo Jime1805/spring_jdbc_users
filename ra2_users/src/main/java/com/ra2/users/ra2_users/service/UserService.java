@@ -1,6 +1,5 @@
 package com.ra2.users.ra2_users.service;
 
-import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -49,7 +48,7 @@ public class UserService {
         return usuario;
     }
     
-    public List<Users> uploadingImage(Long id, MultipartFile imageFile){
+    public List<Users> uploadingImage(Long id, MultipartFile imageFile) throws Exception{
         List<Users> user = userRepository.findUserById(id);
         if(user == null){
             return null;
@@ -59,9 +58,27 @@ public class UserService {
 
         if(!Files.exists(imagesDir)){
             Files.createDirectories(imagesDir);
-        }      
+        }
 
-        int numReg = userRepository.updateUserImagePath(id, imageFile);
+        String originalFile = imageFile.getOriginalFilename();
+
+        if(originalFile == null){
+            return null;
+        }
+
+        String newFile = "user_" + id + originalFile.substring(originalFile.lastIndexOf("."));
+
+        Path imagePath = imagesDir.resolve(newFile);      
+
+        Files.copy(imageFile.getInputStream(), imagePath);
+
+        String pathFinal = "/images/" + newFile;
+
+        int numReg = userRepository.updateUserImagePath(id, pathFinal);
+
+        if (numReg == 0){
+            return null;
+        }
         return user;
     }
 }

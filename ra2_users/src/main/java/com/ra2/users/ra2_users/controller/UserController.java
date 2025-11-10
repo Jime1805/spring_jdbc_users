@@ -39,8 +39,8 @@ public class UserController {
     }
 
     @PostMapping("/users/{id}/image")
-    public ResponseEntity<String> postUsersImage(@PathVariable Long id, @RequestParam MultipartFile imageFile) {
-        List<Users> user =  userService.uploadingImage(id, imageFile);
+    public ResponseEntity<String> postUsersImage(@PathVariable Long id, @RequestParam MultipartFile imageFile) throws Exception {
+        List<Users> user = userService.uploadingImage(id, imageFile);
 
         if(user == null){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al trobar l'usuari.");

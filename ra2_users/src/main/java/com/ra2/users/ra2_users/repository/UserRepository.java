@@ -70,7 +70,7 @@ public class UserRepository {
     }
 
     public int updateUserImagePath(Long id, String imagePath){
-        String sql = "UPDATE users SET image_path = ?, dataUpdated = ?, WHERE id = ?";
+        String sql = "UPDATE users SET image_path = ?, dataUpdated = ? WHERE id = ?";
         Timestamp now = Timestamp.valueOf(LocalDateTime.now());
         return jdbcTemplate.update(sql, imagePath, now, id);
     }
