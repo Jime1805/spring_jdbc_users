@@ -56,8 +56,6 @@ public class UserController {
         }
         return ResponseEntity.status(HttpStatus.OK).body("CSV pujat amb èxit.");
     }
-    
-
 
     @GetMapping("/users") //localhost:8082/api/users
     public ResponseEntity<List<Users>> getAllUsers() {

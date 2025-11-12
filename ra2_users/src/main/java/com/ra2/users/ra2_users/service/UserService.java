@@ -1,5 +1,9 @@
 package com.ra2.users.ra2_users.service;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -7,6 +11,7 @@ import java.nio.file.StandardCopyOption;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.security.SecurityProperties.User;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -81,13 +86,31 @@ public class UserService {
         return user;
     }
 
+
+
     public int UploadingCsvUsers(MultipartFile csvFile){
         int totalAdded = 0;
 
-        if(csvFile == null || csvFile.isEmpty()){
-            return totalAdded;
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(csvFile.getInputStream()))){
+            String linea;
+
+            while ((linea = br.readLine()) != null) {
+                String [] camps = linea.split(",");
+                Users user = new Users();
+
+                user.setNom(camps[0]);
+                user.setDescripcion(camps[1]);
+                user.setEmail(camps[2]);
+                user.setContrasenya(camps[3]);
+                
+                int users = UserRepository.save(user);
+
+                totalAdded ++;
+            }
+        } catch (Exception e) {
+            
         }
-        
+
         return totalAdded;
     }
 }
