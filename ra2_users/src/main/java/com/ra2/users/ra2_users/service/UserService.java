@@ -56,7 +56,7 @@ public class UserService {
         }
         Users user = users.get(0);
 
-        Path imagesDir = Paths.get("src/main/resources/public/images");
+        Path imagesDir = Paths.get("private/image");
         if(!Files.exists(imagesDir)){
             Files.createDirectories(imagesDir);
         }
