@@ -29,7 +29,7 @@ public class UserController {
     @Autowired
     UserService userService;
 
-    @PostMapping("/users") // localhost:8082/users {Estructura JSON}
+    @PostMapping("/users") // localhost:8082/api/users {Estructura JSON}
     public ResponseEntity<String> postUser(@RequestBody Users user) {
         int usuario = userService.saving(user);
         if(usuario == 0){
@@ -38,9 +38,9 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body("Usuari creat amb èxit: " + user.getNom());
     }
 
-    @PostMapping("/users/{id}/image")
+    @PostMapping("/users/{id}/imageFile") // localhost:8082/api/users/{id del user}/image -> form-data (Key: imageFile, Type: file, Value: la imatge (.jpg o .png)) 
     public ResponseEntity<String> postUsersImage(@PathVariable Long id, @RequestParam MultipartFile imageFile) throws Exception {
-        List<Users> user = userService.uploadingImage(id, imageFile);
+        Users user = userService.uploadingImage(id, imageFile);
 
         if(user == null){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al trobar l'usuari.");
@@ -48,7 +48,18 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body("Imatge pujada amb èxit.");
     }
 
-    @GetMapping("/users")
+    @PostMapping("/users/upload-csv")
+    public ResponseEntity<String> postUserCsv(@RequestParam MultipartFile csvFile) {
+        int totalAdded = userService.UploadingCsvUsers(csvFile);
+        if (totalAdded == 0){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al llegir el CSV.");
+        }
+        return ResponseEntity.status(HttpStatus.OK).body("CSV pujat amb èxit.");
+    }
+    
+
+
+    @GetMapping("/users") //localhost:8082/api/users
     public ResponseEntity<List<Users>> getAllUsers() {
         List<Users> usuarios = userService.getingAllUsers();
         if (usuarios == null || usuarios.isEmpty()){
@@ -57,7 +68,7 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(usuarios);
     }
     
-    @GetMapping("/users/{userId}") // localhost:8082/users/1
+    @GetMapping("/users/{userId}") // localhost:8082/api/users/1
     public ResponseEntity<Users> getUserById(@PathVariable Long userId) {
         List<Users> usuario = userService.getingUsersById(userId);
         if (usuario == null || usuario.isEmpty()){
@@ -66,7 +77,7 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(usuario.get(0));
     }
 
-    @PutMapping("/users/{userId}") // localhost:8082/users/1 {Estructura JSOn}
+    @PutMapping("/users/{userId}") // localhost:8082/api/users/1 {Estructura JSOn}
     public ResponseEntity<String> postUser(@PathVariable Long userId, @RequestBody Users modificacio) {
         int updated = userService.updating(userId, modificacio);
 
