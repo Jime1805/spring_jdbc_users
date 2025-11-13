@@ -54,7 +54,7 @@ public class UserController {
         if (totalAdded == 0){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al llegir el CSV.");
         }
-        return ResponseEntity.status(HttpStatus.OK).body("CSV pujat amb èxit.");
+        return ResponseEntity.status(HttpStatus.OK).body("S'han pujat " + totalAdded + " usuari/s");
     }
 
     @GetMapping("/users") //localhost:8082/api/users
