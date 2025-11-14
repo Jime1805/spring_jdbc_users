@@ -50,11 +50,7 @@ public class UserController {
 
     @PostMapping("/users/upload-csv")
     public ResponseEntity<String> postUserCsv(@RequestParam MultipartFile csvFile) {
-        int totalAdded = userService.UploadingCsvUsers(csvFile);
-        if (totalAdded == 0){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al llegir el CSV.");
-        }
-        return ResponseEntity.status(HttpStatus.OK).body("S'han pujat " + totalAdded + " usuari/s");
+        return userService.UploadingCsvUsers(csvFile);
     }
 
     @GetMapping("/users") //localhost:8082/api/users

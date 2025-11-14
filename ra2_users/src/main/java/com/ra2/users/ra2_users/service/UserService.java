@@ -9,6 +9,8 @@ import java.nio.file.StandardCopyOption;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -83,7 +85,7 @@ public class UserService {
         return user;
     }
 
-    public int UploadingCsvUsers(MultipartFile csvFile){
+    public ResponseEntity<String> UploadingCsvUsers(MultipartFile csvFile){
         int totalAdded = 0;
 
         try (BufferedReader br = new BufferedReader(new InputStreamReader(csvFile.getInputStream()))){
@@ -93,7 +95,7 @@ public class UserService {
             while ((linea = br.readLine()) != null) {
 
                 if(linea.trim().isEmpty()){
-                    return totalAdded;
+                    return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Error. El csv està buit");
                 }
 
                 if(primeraLinea){
@@ -106,7 +108,7 @@ public class UserService {
                 String [] camps = linea.split(",");
 
                 if (camps.length < 4){
-                    return totalAdded;
+                    return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Error. Al csv li falta algun camp en alguna linea. S'han afegit " + totalAdded +" usuaris");;
                 }
 
                 Users user = new Users();
@@ -127,6 +129,6 @@ public class UserService {
             System.out.println("Error");
         }
 
-        return totalAdded;
+        return ResponseEntity.status(HttpStatus.OK).body("Acceptat. S'han afegit " + totalAdded + " usuaris");
     }
 }
