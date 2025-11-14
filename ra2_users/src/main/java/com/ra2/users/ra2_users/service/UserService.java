@@ -53,7 +53,7 @@ public class UserService {
         return usuario;
     }
     
-    public Users uploadingImage(Long id, MultipartFile imageFile) throws Exception{
+    public ResponseEntity<String> uploadingImage(Long id, MultipartFile imageFile) throws Exception{
         List<Users> users = userRepository.findUserById(id);
         if(users == null || users.isEmpty()){
             return null;
@@ -79,10 +79,10 @@ public class UserService {
 
         int numReg = userRepository.updateUserImagePath(id, pathFinal);
         if (numReg == 0){
-            return null;
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Error. No s'ha pujat la imatge");
         }
         user.setImage_path(pathFinal);
-        return user;
+        return ResponseEntity.status(HttpStatus.OK).body("Acceptat. S'ha pujat la imatge correctament");
     }
 
     public ResponseEntity<String> UploadingCsvUsers(MultipartFile csvFile){
@@ -108,7 +108,7 @@ public class UserService {
                 String [] camps = linea.split(",");
 
                 if (camps.length < 4){
-                    return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Error. Al csv li falta algun camp en alguna linea. S'han afegit " + totalAdded +" usuaris");;
+                    return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Error. Al csv li falta algun camp en alguna linea. S'han afegit " + totalAdded +" usuaris");
                 }
 
                 Users user = new Users();

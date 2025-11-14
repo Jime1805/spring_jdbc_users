@@ -40,12 +40,7 @@ public class UserController {
 
     @PostMapping("/users/{id}/imageFile") // localhost:8082/api/users/{id del user}/image -> form-data (Key: imageFile, Type: file, Value: la imatge (.jpg o .png)) 
     public ResponseEntity<String> postUsersImage(@PathVariable Long id, @RequestParam MultipartFile imageFile) throws Exception {
-        Users user = userService.uploadingImage(id, imageFile);
-
-        if(user == null){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al trobar l'usuari.");
-        }
-        return ResponseEntity.status(HttpStatus.OK).body("Imatge pujada amb èxit.");
+        return userService.uploadingImage(id, imageFile);
     }
 
     @PostMapping("/users/upload-csv")
