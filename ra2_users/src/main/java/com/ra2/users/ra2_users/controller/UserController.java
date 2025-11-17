@@ -43,7 +43,7 @@ public class UserController {
         return userService.uploadingImage(id, imageFile);
     }
 
-    @PostMapping("/users/upload-csv")
+    @PostMapping("/users/csvFile")
     public ResponseEntity<String> postUserCsv(@RequestParam MultipartFile csvFile) {
         return userService.UploadingCsvUsers(csvFile);
     }
