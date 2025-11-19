@@ -1,6 +1,7 @@
 package com.ra2.users.ra2_users.service;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -14,6 +15,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ra2.users.ra2_users.model.Users;
 import com.ra2.users.ra2_users.repository.UserRepository;
 
@@ -22,6 +25,9 @@ public class UserService {
 
     @Autowired
     UserRepository userRepository;
+
+    @Autowired
+    ObjectMapper mapper;
 
     public int saving(Users user){
         int usuario = userRepository.save(user);
@@ -52,7 +58,22 @@ public class UserService {
         int usuario = userRepository.deleteUser(userId);
         return usuario;
     }
-    
+
+    /*
+    public int uploadFiles(MultipartFile file, Path fileDir) throws Exception{
+        if(!Files.exists(fileDir)){
+            Files.createDirectories(fileDir);
+        }
+
+        String originalFile = file.getOriginalFilename();
+        if(originalFile == null){
+            return 0;
+        }
+
+        return 1;
+    }
+    */
+
     public ResponseEntity<String> uploadingImage(Long id, MultipartFile imageFile) throws Exception{
         List<Users> users = userRepository.findUserById(id);
         if(users == null || users.isEmpty()){
@@ -123,12 +144,52 @@ public class UserService {
                 if (inserted > 0){
                     totalAdded ++;
                 }
-
             }
-        } catch (Exception e) {
-            System.out.println("Error");
-        }
 
+        } catch (Exception e) {
+            System.err.println("Error en la linea " + totalAdded);
+        }
+        
         return ResponseEntity.status(HttpStatus.OK).body("Acceptat. S'han afegit " + totalAdded + " usuaris");
+    }
+
+    public int uploadingJson(MultipartFile file) {
+        int nombre_users = 0;
+        try {
+            JsonNode arrel = mapper.readTree(file.getInputStream());
+
+            JsonNode data = arrel.path("data");
+            String control = data.path("controll").asText();
+            if (!control.equals("OK")){
+                return 0;
+            }
+            int count = data.path("count").asInt();
+
+            JsonNode users = data.path("users");
+            for (JsonNode user: users){
+                Users usuario = new Users();
+
+                String name = user.path("name").asText();
+                String description = user.path("description").asText();
+                String email = user.path("email").asText();
+                String password = user.path("password").asText();
+
+                usuario.setNom(name);
+                usuario.setDescripcion(description);
+                usuario.setEmail(email);
+                usuario.setContrasenya(password);
+
+                userRepository.save(usuario);
+                nombre_users ++;
+            }
+            
+            if (nombre_users != count){
+                return 0;
+            }
+            
+            return 1;
+        } catch (IOException e) {
+            System.err.println("El Json té algun error");
+        }
     }
 }
