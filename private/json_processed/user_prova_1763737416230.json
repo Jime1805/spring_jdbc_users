@@ -1,0 +1,26 @@
+{
+  "data": {
+    "count": 3,
+    "control": "OK",
+    "users": [
+      {
+        "name": "Lucía Fernández",
+        "description": "Ingeniera de software y entusiasta del open source.",
+        "email": "lucia.fernandez@example.com",
+        "password": "Lf92!xA7"
+      },
+      {
+        "name": "Carlos Medina",
+        "description": "Analista de datos con pasión por la inteligencia artificial.",
+        "email": "c.medina@example.org",
+        "password": "Cmedina#2024"
+      },
+      {
+        "name": "Sofía Ramírez",
+        "description": "Diseñadora UX/UI enfocada en accesibilidad digital.",
+        "email": "sofia.ramirez@example.net",
+        "password": "SofiR4m!23"
+      }
+    ]
+  }
+}

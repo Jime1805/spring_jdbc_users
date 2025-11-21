@@ -45,7 +45,11 @@ public class UserController {
 
     @PostMapping("/users/upload-csv")
     public ResponseEntity<String> postUserCsv(@RequestParam MultipartFile csvFile) {
-        return userService.UploadingCsvUsers(csvFile);
+        int uploaded = userService.UploadingCsvUsers(csvFile);
+        if (uploaded == 0){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al carregar el fitxer");
+        }
+        return ResponseEntity.status(HttpStatus.OK).body("S'han afegit " + uploaded + " usuaris.");
     }
 
     @PostMapping("/users/upload-json")

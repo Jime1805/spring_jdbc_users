@@ -106,7 +106,7 @@ public class UserService {
         return ResponseEntity.status(HttpStatus.OK).body("Acceptat. S'ha pujat la imatge correctament");
     }
 
-    public ResponseEntity<String> UploadingCsvUsers(MultipartFile csvFile){
+    public int UploadingCsvUsers(MultipartFile csvFile){
         int totalAdded = 0;
 
         try (BufferedReader br = new BufferedReader(new InputStreamReader(csvFile.getInputStream()))){
@@ -116,7 +116,7 @@ public class UserService {
             while ((linea = br.readLine()) != null) {
 
                 if(linea.trim().isEmpty()){
-                    return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Error. El csv està buit");
+                    return 0;
                 }
 
                 if(primeraLinea){
@@ -129,7 +129,7 @@ public class UserService {
                 String [] camps = linea.split(",");
 
                 if (camps.length < 4){
-                    return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Error. Al csv li falta algun camp en alguna linea. S'han afegit " + totalAdded +" usuaris");
+                    return totalAdded;
                 }
 
                 Users user = new Users();
@@ -150,7 +150,7 @@ public class UserService {
             System.err.println("Error en la linea " + totalAdded);
         }
         
-        return ResponseEntity.status(HttpStatus.OK).body("Acceptat. S'han afegit " + totalAdded + " usuaris");
+        return totalAdded;
     }
 
     public int uploadingJson(MultipartFile file) {
