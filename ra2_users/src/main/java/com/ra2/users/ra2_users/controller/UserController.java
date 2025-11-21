@@ -38,15 +38,29 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body("Usuari creat amb èxit: " + user.getNom());
     }
 
-    @PostMapping("/users/{id}/imageFile") // localhost:8082/api/users/{id del user}/image -> form-data (Key: imageFile, Type: file, Value: la imatge (.jpg o .png)) 
+    @PostMapping("/users/{id}/image") // localhost:8082/api/users/{id del user}/image -> form-data (Key: imageFile, Type: file, Value: la imatge (.jpg o .png)) 
     public ResponseEntity<String> postUsersImage(@PathVariable Long id, @RequestParam MultipartFile imageFile) throws Exception {
         return userService.uploadingImage(id, imageFile);
     }
 
-    @PostMapping("/users/csvFile")
+    @PostMapping("/users/upload-csv")
     public ResponseEntity<String> postUserCsv(@RequestParam MultipartFile csvFile) {
         return userService.UploadingCsvUsers(csvFile);
     }
+
+    @PostMapping("/users/upload-json")
+    public ResponseEntity<String> postUserJson(@RequestParam MultipartFile jsonFile) {
+        int uploadet = userService.uploadingJson(jsonFile);
+        if (uploadet == 0){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al carregar el json.");
+        }
+        boolean saved = userService.savingJson(jsonFile);
+        if (!saved){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al guardar el fitxer.");
+        }
+        return ResponseEntity.status(HttpStatus.CREATED).body("Usuaris creats amb èxit: " + uploadet + ".");
+    }
+    
 
     @GetMapping("/users") //localhost:8082/api/users
     public ResponseEntity<List<Users>> getAllUsers() {

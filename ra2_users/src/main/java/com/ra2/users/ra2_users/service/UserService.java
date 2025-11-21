@@ -159,7 +159,7 @@ public class UserService {
             JsonNode arrel = mapper.readTree(file.getInputStream());
 
             JsonNode data = arrel.path("data");
-            String control = data.path("controll").asText();
+            String control = data.path("control").asText();
             if (!control.equals("OK")){
                 return 0;
             }
@@ -186,10 +186,44 @@ public class UserService {
             if (nombre_users != count){
                 return 0;
             }
-            
-            return 1;
+
+            return nombre_users;
+
         } catch (IOException e) {
             System.err.println("El Json té algun error");
+            return 0;
+        }
+    }
+
+    public boolean savingJson(MultipartFile jsonFile){
+        try {
+            if (jsonFile == null || jsonFile.isEmpty()) {
+                return false;
+            }
+            
+            String originalFile = jsonFile.getOriginalFilename();
+            if (originalFile == null || !originalFile.toLowerCase().endsWith(".json")) {
+                return false;
+            }
+
+            Path jsonDir = Paths.get("private/json_processed");
+            if(!Files.exists(jsonDir)){
+                Files.createDirectories(jsonDir);
+            }
+
+            String extension = originalFile.substring(originalFile.lastIndexOf("."));
+            String baseName = originalFile.substring(0, originalFile.lastIndexOf("."));
+            String newFile = "user_" + baseName + "_" + System.currentTimeMillis() + extension;
+
+            Path jsonPath = jsonDir.resolve(newFile);
+
+            Files.copy(jsonFile.getInputStream(), jsonPath, StandardCopyOption.REPLACE_EXISTING);
+
+            return true;
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
         }
     }
 }
