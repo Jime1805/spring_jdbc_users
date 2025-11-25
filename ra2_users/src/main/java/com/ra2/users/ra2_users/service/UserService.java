@@ -59,51 +59,25 @@ public class UserService {
         return usuario;
     }
 
-    /*
-    public int uploadFiles(MultipartFile file, Path fileDir) throws Exception{
-        if(!Files.exists(fileDir)){
-            Files.createDirectories(fileDir);
-        }
-
-        String originalFile = file.getOriginalFilename();
-        if(originalFile == null){
-            return 0;
-        }
-
-        return 1;
-    }
-    */
-
-    public ResponseEntity<String> uploadingImage(Long id, MultipartFile imageFile) throws Exception{
+    public String uploadingImage(Long id, MultipartFile imageFile) throws Exception{
         List<Users> users = userRepository.findUserById(id);
+        int numReg = 0;
         if(users == null || users.isEmpty()){
             return null;
         }
         Users user = users.get(0);
 
-        Path imagesDir = Paths.get("private/image");
-        if(!Files.exists(imagesDir)){
-            Files.createDirectories(imagesDir);
-        }
+        String pathFinal = savingFiles(imageFile, id);
 
-        String originalFile = imageFile.getOriginalFilename();
-        if(originalFile == null){
+        if (pathFinal != null){
+            numReg = userRepository.updateUserImagePath(id, pathFinal);
+        }
+        
+        if (numReg == 0) {
             return null;
         }
-
-        String newFile = "user_" + id + originalFile.substring(originalFile.lastIndexOf("."));
-        Path imagePath = imagesDir.resolve(newFile);      
-
-        Files.copy(imageFile.getInputStream(), imagePath, StandardCopyOption.REPLACE_EXISTING);
-
-        String pathFinal = "/images/" + newFile;
-
-        int numReg = userRepository.updateUserImagePath(id, pathFinal);
-        if (numReg == 0){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Error. No s'ha pujat la imatge");
-        }
         user.setImage_path(pathFinal);
-        return ResponseEntity.status(HttpStatus.OK).body("Acceptat. S'ha pujat la imatge correctament");
+        return pathFinal;
     }
 
     public int UploadingCsvUsers(MultipartFile csvFile){
@@ -195,47 +169,54 @@ public class UserService {
         }
     }
 
-    public boolean savingFiles(MultipartFile file){
+    public String savingFiles(MultipartFile file, Long id){
         try {
             if (file == null || file.isEmpty()) {
-                return false;
+                return null;
             }
             
             String originalFile = file.getOriginalFilename();
             
             if (originalFile == null) {
-                return false;
+                return null;
             }
+            String path = "private/altres"; 
+            Path fileDir = Paths.get(path);
+            String newFile = "";
 
-            Path jsonDir = Paths.get("private/altres");
-
-            if (originalFile.toLowerCase().endsWith(".json")){
-                jsonDir = Paths.get("private/json_processed");
+            if (id == null && originalFile.toLowerCase().endsWith(".json")){
+                path = "private/json_processed";
+                fileDir = Paths.get(path);
+                String extension = originalFile.substring(originalFile.lastIndexOf("."));
+                String baseName = originalFile.substring(0, originalFile.lastIndexOf("."));
+                newFile = "user_" + baseName + "_" + System.currentTimeMillis() + extension;
             }
-            else if (originalFile.toLowerCase().endsWith(".csv")){
-                jsonDir = Paths.get("private/csv_processed");
+            else if (id == null && originalFile.toLowerCase().endsWith(".csv")){
+                path = "private/csv_processed";
+                fileDir = Paths.get(path);
+                String extension = originalFile.substring(originalFile.lastIndexOf("."));
+                String baseName = originalFile.substring(0, originalFile.lastIndexOf("."));
+                newFile = "user_" + baseName + "_" + System.currentTimeMillis() + extension;
             }
-            else if (originalFile.toLowerCase().endsWith(".jpg") || originalFile.toLowerCase().endsWith(".png")){
-                jsonDir = Paths.get("private/json_processed");
+            else if (id != null && (originalFile.toLowerCase().endsWith(".jpg") || originalFile.toLowerCase().endsWith(".png"))){
+                path = "private/image";
+                fileDir = Paths.get(path);
+                newFile = "user_" + id + originalFile.substring(originalFile.lastIndexOf("."));
             }
             
-            if(!Files.exists(jsonDir)){
-                Files.createDirectories(jsonDir);
+            if(!Files.exists(fileDir)){
+                Files.createDirectories(fileDir);
             }
 
-            String extension = originalFile.substring(originalFile.lastIndexOf("."));
-            String baseName = originalFile.substring(0, originalFile.lastIndexOf("."));
-            String newFile = "user_" + baseName + "_" + System.currentTimeMillis() + extension;
+            Path filePath = fileDir.resolve(newFile);
 
-            Path jsonPath = jsonDir.resolve(newFile);
+            Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
-            Files.copy(file.getInputStream(), jsonPath, StandardCopyOption.REPLACE_EXISTING);
-
-            return true;
+            return path;
 
         } catch (IOException e) {
             e.printStackTrace();
-            return false;
+            return null;
         }
     }
 }

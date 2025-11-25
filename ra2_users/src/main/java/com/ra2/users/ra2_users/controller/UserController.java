@@ -1,5 +1,6 @@
 package com.ra2.users.ra2_users.controller;
 
+import java.nio.file.Path;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,8 +40,13 @@ public class UserController {
     }
 
     @PostMapping("/users/{id}/image") // localhost:8082/api/users/{id del user}/image -> form-data (Key: imageFile, Type: file, Value: la imatge (.jpg o .png)) 
+    // Se guarda una foto por user
     public ResponseEntity<String> postUsersImage(@PathVariable Long id, @RequestParam MultipartFile imageFile) throws Exception {
-        return userService.uploadingImage(id, imageFile);
+        String uploaded = userService.uploadingImage(id, imageFile);
+        if (uploaded == null){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Error. No s'ha pujat la imatge");
+        }
+        return ResponseEntity.status(HttpStatus.OK).body("Acceptat. S'ha pujat la imatge correctament amb la ruta: " + uploaded);
     }
 
     @PostMapping("/users/upload-csv")
@@ -49,11 +55,11 @@ public class UserController {
         if (uploaded == 0){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al carregar el fitxer");
         }
-        boolean saved = userService.savingFiles(csvFile);
-        if (!saved){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al guardar el fitxer");
+        String saved = userService.savingFiles(csvFile, null);
+        if (saved == null){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al guardar el fitxer en : " + saved + ".");
         }
-        return ResponseEntity.status(HttpStatus.OK).body("S'han afegit " + uploaded + " usuaris.");
+        return ResponseEntity.status(HttpStatus.OK).body("S'han afegit " + uploaded + " usuaris. Fitxer guardat a la ruta: " + saved);
     }
 
     @PostMapping("/users/upload-json")
@@ -62,11 +68,11 @@ public class UserController {
         if (uploadet == 0){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al carregar el json.");
         }
-        boolean saved = userService.savingFiles(jsonFile);
-        if (!saved){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al guardar el fitxer.");
+        String saved = userService.savingFiles(jsonFile, null);
+        if (saved == null){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al guardar el fitxer en : " + saved + ".");
         }
-        return ResponseEntity.status(HttpStatus.CREATED).body("Usuaris creats amb èxit: " + uploadet + ".");
+        return ResponseEntity.status(HttpStatus.CREATED).body("Usuaris creats amb èxit: " + uploadet + ". Fitxer guardat a la ruta: " + saved);
     }
     
 
