@@ -10,8 +10,6 @@ import java.nio.file.StandardCopyOption;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -107,21 +105,25 @@ public class UserService {
                 }
 
                 Users user = new Users();
-
-                user.setNom(camps[0].trim());
-                user.setDescripcion(camps[1].trim());
-                user.setEmail(camps[2].trim());
-                user.setContrasenya(camps[3].trim());
+                try {
+                    user.setNom(camps[0].trim());
+                    user.setDescripcion(camps[1].trim());
+                    user.setEmail(camps[2].trim());
+                    user.setContrasenya(camps[3].trim());
                 
-                int inserted = userRepository.save(user);
-
-                if (inserted > 0){
-                    totalAdded ++;
+                    int inserted = userRepository.save(user);
+                    if (inserted > 0){
+                        totalAdded ++;
+                    }
+                } catch (Exception e) {
+                    System.err.println("A la linea " + totalAdded + 1 + " no s'ha pogut afegir perqué les dades d'aquest usuari són incoherents");
+                    return totalAdded;
                 }
             }
 
         } catch (Exception e) {
             System.err.println("Error en la linea " + totalAdded);
+            return totalAdded;
         }
         
         return totalAdded;
