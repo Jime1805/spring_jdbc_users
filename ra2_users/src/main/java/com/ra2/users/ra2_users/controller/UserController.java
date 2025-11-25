@@ -49,6 +49,10 @@ public class UserController {
         if (uploaded == 0){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al carregar el fitxer");
         }
+        boolean saved = userService.savingFiles(csvFile);
+        if (!saved){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al guardar el fitxer");
+        }
         return ResponseEntity.status(HttpStatus.OK).body("S'han afegit " + uploaded + " usuaris.");
     }
 
@@ -58,7 +62,7 @@ public class UserController {
         if (uploadet == 0){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al carregar el json.");
         }
-        boolean saved = userService.savingJson(jsonFile);
+        boolean saved = userService.savingFiles(jsonFile);
         if (!saved){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al guardar el fitxer.");
         }

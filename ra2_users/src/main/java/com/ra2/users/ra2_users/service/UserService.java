@@ -195,18 +195,30 @@ public class UserService {
         }
     }
 
-    public boolean savingJson(MultipartFile jsonFile){
+    public boolean savingFiles(MultipartFile file){
         try {
-            if (jsonFile == null || jsonFile.isEmpty()) {
+            if (file == null || file.isEmpty()) {
                 return false;
             }
             
-            String originalFile = jsonFile.getOriginalFilename();
-            if (originalFile == null || !originalFile.toLowerCase().endsWith(".json")) {
+            String originalFile = file.getOriginalFilename();
+            
+            if (originalFile == null) {
                 return false;
             }
 
-            Path jsonDir = Paths.get("private/json_processed");
+            Path jsonDir = Paths.get("private/altres");
+
+            if (originalFile.toLowerCase().endsWith(".json")){
+                jsonDir = Paths.get("private/json_processed");
+            }
+            else if (originalFile.toLowerCase().endsWith(".csv")){
+                jsonDir = Paths.get("private/csv_processed");
+            }
+            else if (originalFile.toLowerCase().endsWith(".jpg") || originalFile.toLowerCase().endsWith(".png")){
+                jsonDir = Paths.get("private/json_processed");
+            }
+            
             if(!Files.exists(jsonDir)){
                 Files.createDirectories(jsonDir);
             }
@@ -217,7 +229,7 @@ public class UserService {
 
             Path jsonPath = jsonDir.resolve(newFile);
 
-            Files.copy(jsonFile.getInputStream(), jsonPath, StandardCopyOption.REPLACE_EXISTING);
+            Files.copy(file.getInputStream(), jsonPath, StandardCopyOption.REPLACE_EXISTING);
 
             return true;
 
