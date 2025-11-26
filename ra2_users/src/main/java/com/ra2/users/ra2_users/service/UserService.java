@@ -15,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ra2.users.ra2_users.logs.UserLogs;
 import com.ra2.users.ra2_users.model.Users;
 import com.ra2.users.ra2_users.repository.UserRepository;
 
@@ -27,6 +28,9 @@ public class UserService {
     @Autowired
     ObjectMapper mapper;
 
+    @Autowired
+    UserLogs userLogs;
+    
     public int saving(Users user){
         int usuario = userRepository.save(user);
         return usuario;
