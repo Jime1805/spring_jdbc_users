@@ -33,21 +33,48 @@ public class UserService {
     
     public int saving(Users user){
         int usuario = userRepository.save(user);
+        if (usuario == 0) {
+            userLogs.error("No s'ha pogut crear l'usuari amb id " + user.getId(), "UserService", "saving");
+        }
+        else{
+            userLogs.info("Creant l'usuari amb id " + user.getId(), "UserService", "saving");
+        }
         return usuario;
     }
 
     public List<Users> getingAllUsers() {
         List<Users> usuarios = userRepository.findAll();
+        if (usuarios == null || usuarios.isEmpty()) {
+            userLogs.error("No hi ha usuaris enregistrats", "UserService", "gettingAllUsers");
+        }
+        else {
+            userLogs.info("Cercant tots els usuaris", "UserService", "gettingAllUsers");
+        }
         return usuarios;
     }
 
     public List<Users> getingUsersById(Long userId){
         List<Users> usuario = userRepository.findUserById(userId);
+        if (usuario == null || usuario.isEmpty()) {
+            userLogs.error("No s'ha trobat cap usuari amb id: " + userId, "UserSerice", "gettingAllUsers");
+        } else {
+            userLogs.info("Cercant l'usuari amb id "+ userId, "UserSerice", "gettingAllUsers");
+        }
         return usuario;
     }
 
     public int updating(Long userId, Users modificacio){
+        List<Users> usuario = userRepository.findUserById(userId);
+        if (usuario == null || usuario.isEmpty()) {
+            userLogs.error("No s'ha trobat cap usuari amb id: " + userId, "UserSerice", "updating");
+        }
         int updated = userRepository.updateUser(userId, modificacio);
+        if(updated == 0){
+            userLogs.error("No s'ha pogut modificar l'usuari amb id " + userId, "UserService", "updating");
+        }
+        else{
+            userLogs.info("Actualitzant l'usuari amb id " + userId, "UserService", "updating");
+        }
         return updated;
     }
 
@@ -221,7 +248,7 @@ public class UserService {
             return path;
 
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println("Error al guardar el fitxer: " + e);
             return null;
         }
     }
