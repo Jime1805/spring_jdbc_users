@@ -34,10 +34,10 @@ public class UserService {
     public int saving(Users user){
         int usuario = userRepository.save(user);
         if (usuario == 0) {
-            userLogs.error("No s'ha pogut crear l'usuari amb id " + user.getId(), "UserService", "saving");
+            userLogs.error("No s'ha pogut crear l'usuari", "UserService", "saving");
         }
         else{
-            userLogs.info("Creant l'usuari amb id " + user.getId(), "UserService", "saving");
+            userLogs.info("Creant l'usuari " + user.getNom(), "UserService", "saving");
         }
         return usuario;
     }
@@ -48,7 +48,7 @@ public class UserService {
             userLogs.error("No hi ha usuaris enregistrats", "UserService", "gettingAllUsers");
         }
         else {
-            userLogs.info("Cercant tots els usuaris", "UserService", "gettingAllUsers");
+            userLogs.info("Cercant tots els usuaris...", "UserService", "gettingAllUsers");
         }
         return usuarios;
     }
@@ -67,6 +67,7 @@ public class UserService {
         List<Users> usuario = userRepository.findUserById(userId);
         if (usuario == null || usuario.isEmpty()) {
             userLogs.error("No s'ha trobat cap usuari amb id: " + userId, "UserSerice", "updating");
+            return -1;
         }
         int updated = userRepository.updateUser(userId, modificacio);
         if(updated == 0){
@@ -79,19 +80,42 @@ public class UserService {
     }
 
     public int updatingName(Long userId, String nom){
+        List<Users> usuario = userRepository.findUserById(userId);
+        if (usuario == null || usuario.isEmpty()) {
+            userLogs.error("No s'ha trobat cap usuari amb id: " + userId, "UserSerice", "updatingName");
+            return -1;
+        }
         int updated = userRepository.updateUserName(userId, nom);
+        if (updated == 0){
+            userLogs.error("No s'ha pogut modificar l'usuari amb id: " + userId, "UserSerice", "updatingName");
+        }
+        else{
+            userLogs.info("Actualitzant l'usuari amb id: " + userId, "UserSerice", "updatingName");
+        }
         return updated;
     }
 
     public int deletingUser(Long userId){
-        int usuario = userRepository.deleteUser(userId);
-        return usuario;
+        List<Users> usuario = userRepository.findUserById(userId);
+        if (usuario == null || usuario.isEmpty()) {
+            userLogs.error("No s'ha trobat cap usuari amb id: " + userId, "UserSerice", "deletingUser");
+            return -1;
+        }
+        int user = userRepository.deleteUser(userId);
+        if(user == 0){
+            userLogs.error("No s'ha pogut esborrar l'usuari amb id: " + userId, "UserSerice", "deletingUser");
+        }
+        else{
+            userLogs.info("Esborrant l'usuari amb id: " + userId, "UserSerice", "deletingUser");
+        }
+        return user;
     }
 
     public String uploadingImage(Long id, MultipartFile imageFile) throws Exception{
         List<Users> users = userRepository.findUserById(id);
         int numReg = 0;
         if(users == null || users.isEmpty()){
+            userLogs.error("No s'ha trobat l'usuari amb id " + id, "UserService", "uploadingImage");
             return null;
         }
         Users user = users.get(0);
@@ -103,7 +127,11 @@ public class UserService {
         }
         
         if (numReg == 0) {
+            userLogs.error("No s'ha afegit la imatge amb url " + pathFinal, "UserService", "uploadingImage");
             return null;
+        }
+        else{
+            userLogs.info("Afegint la imatge a la url " + pathFinal, "UserService", "uploadingImage");
         }
         user.setImage_path(pathFinal);
         return pathFinal;
@@ -119,6 +147,7 @@ public class UserService {
             while ((linea = br.readLine()) != null) {
 
                 if(linea.trim().isEmpty()){
+                    userLogs.error("Error al carregar el fitxer csv, la linea " + (totalAdded + 1) + " és buida", "UserService", "UploadingCsvUsers");
                     return 0;
                 }
 
@@ -132,6 +161,7 @@ public class UserService {
                 String [] camps = linea.split(",");
 
                 if (camps.length < 4){
+                    userLogs.error("Error al carregar el fitxer csv, la linea " + (totalAdded + 1), "UserService", "UploadingCsvUsers");
                     return totalAdded;
                 }
 
@@ -148,15 +178,17 @@ public class UserService {
                     }
                 } catch (Exception e) {
                     System.err.println("A la linea " + totalAdded + 1 + " no s'ha pogut afegir perqué les dades d'aquest usuari són incoherents");
+                    userLogs.error("Error al carregar el fitxer csv, la linea " + (totalAdded + 1),"UserService", "UploadingCsvUsers");
                     return totalAdded;
                 }
             }
 
         } catch (Exception e) {
             System.err.println("Error en la linea " + totalAdded);
+            userLogs.error("Error al carregar el fitxer csv, la linea " + (totalAdded + 1) + ". " + e,"UserService", "UploadingCsvUsers");
             return totalAdded;
         }
-        
+        userLogs.info("Afegint " + totalAdded + " usuaris", "UserService", "UploadingCsvUsers");
         return totalAdded;
     }
 
@@ -168,6 +200,7 @@ public class UserService {
             JsonNode data = arrel.path("data");
             String control = data.path("control").asText();
             if (!control.equals("OK")){
+                userLogs.error("Error al carregar json, el control no és OK", "UserService", "uploadingJson");
                 return 0;
             }
             int count = data.path("count").asInt();
@@ -191,13 +224,17 @@ public class UserService {
             }
             
             if (nombre_users != count){
+                userLogs.error("Error al carregar json, s'han registrat " + nombre_users + " quan s'havien de registrar " + count, "UserService", "uploadingJson");
                 return 0;
             }
+
+            userLogs.info("Afegint " + nombre_users + "usuaris", "UserService", "uploadingJson");
 
             return nombre_users;
 
         } catch (IOException e) {
             System.err.println("El Json té algun error");
+            userLogs.error("Error al carregar el json, s'han enregistrat " + nombre_users + ". " + e, "UserService", "uploadingJson");
             return 0;
         }
     }
@@ -205,12 +242,14 @@ public class UserService {
     public String savingFiles(MultipartFile file, Long id){
         try {
             if (file == null || file.isEmpty()) {
+                userLogs.error("Error al carregar el fitxer, no s'ha afegit el fitxer", "UserService", "savingFiles");
                 return null;
             }
             
             String originalFile = file.getOriginalFilename();
             
             if (originalFile == null) {
+                userLogs.error("Error al carregar el fitxer, no s'ha afegit el fitxer", "UserService", "savingFiles");
                 return null;
             }
             String path = "private/altres"; 
@@ -237,6 +276,10 @@ public class UserService {
                 newFile = "user_" + id + originalFile.substring(originalFile.lastIndexOf("."));
             }
             
+            if (path.equals("private/altres")) {
+                userLogs.error("Error al guardar el fitxer. Aquest fitxer s'ha guardat en la ruta " + path, "UserService", "savingFiles");
+            }
+
             if(!Files.exists(fileDir)){
                 Files.createDirectories(fileDir);
             }
@@ -245,10 +288,12 @@ public class UserService {
 
             Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
+            userLogs.info("Guardant fitxers, el fitxer s'ha emmagatzemat en " + path, "UserService", "savingFiles");
             return path;
 
         } catch (IOException e) {
             System.err.println("Error al guardar el fitxer: " + e);
+            userLogs.error("Error al guardar el fitxer " + e, "UserService", "savingFiles");
             return null;
         }
     }

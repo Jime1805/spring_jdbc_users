@@ -15,13 +15,13 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class UserLogs {
+
     private final String logDirectory = "private/logs/";
 
     public UserLogs() {
-        String path = "private/logs";
-        Path fileDir = Paths.get(path);
+        Path fileDir = Paths.get(logDirectory);
 
-        if(!Files.exists(fileDir)){
+        if (!Files.exists(fileDir)) {
             try {
                 Files.createDirectories(fileDir);
             } catch (IOException e) {
@@ -30,42 +30,53 @@ public class UserLogs {
         }
     }
 
-    public void error(String frase, String classe, String modulo){
+    public void error(String frase, String classe, String modulo) {
         // Escriurà en el fitxer un error
         String fitxerAvui = obtenirFitxerAvui();
-        Path currentFile = Paths.get(fitxerAvui);
-        try {BufferedWriter writer = Files.newBufferedWriter(currentFile, StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+        Path currentFile = Paths.get(logDirectory + fitxerAvui);
+
+        try (BufferedWriter writer = Files.newBufferedWriter(
+                currentFile,
+                StandardCharsets.UTF_8,
+                StandardOpenOption.CREATE,
+                StandardOpenOption.APPEND)) {
+
             DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-            
             String fechaHora = '[' + LocalDateTime.now().format(formato) + ']';
 
             String linea = fechaHora + " ERROR - " + classe + " - " + modulo + " - " + frase + "\n";
             writer.write(linea);
+
         } catch (Exception e) {
             System.err.println("Error: El log ".concat(fitxerAvui).concat(" és corrupte."));
         }
-
     }
 
-    public void info(String frase, String classe, String modulo){
-        //Escriurà info en el fitxer
+    public void info(String frase, String classe, String modulo) {
+        // Escriurà info en el fitxer
 
         String fitxerAvui = obtenirFitxerAvui();
-        Path currentFile = Paths.get(fitxerAvui);
-        try {BufferedWriter writer = Files.newBufferedWriter(currentFile, StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+        Path currentFile = Paths.get(logDirectory + fitxerAvui);
+
+        try (BufferedWriter writer = Files.newBufferedWriter(
+                currentFile,
+                StandardCharsets.UTF_8,
+                StandardOpenOption.CREATE,
+                StandardOpenOption.APPEND)) {
+
             DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-            
             String fechaHora = '[' + LocalDateTime.now().format(formato) + ']';
 
             String linea = fechaHora + " INFO - " + classe + " - " + modulo + " - " + frase + "\n";
             writer.write(linea);
+
         } catch (Exception e) {
             System.err.println("Error: El log ".concat(fitxerAvui).concat(" és corrupte."));
         }
     }
 
-    public static String obtenirFitxerAvui(){
-        DateTimeFormatter formato = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+    public static String obtenirFitxerAvui() {
+        DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         String fecha = LocalDate.now().format(formato);
         return fecha.concat(".log");
     }

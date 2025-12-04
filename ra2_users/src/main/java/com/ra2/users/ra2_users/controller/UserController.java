@@ -120,7 +120,7 @@ public class UserController {
     public ResponseEntity<String> deleteUsers(@PathVariable Long userId){
         int usuario = userService.deletingUser(userId);
 
-        if (usuario == 0){
+        if (usuario == -1){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario amb id " + userId + " no trobat.");
         }
 
