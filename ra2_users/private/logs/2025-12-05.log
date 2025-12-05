@@ -1,0 +1,14 @@
+[2025-12-05 09:24:45] INFO - UserService - saving - Creant l'usuari Eric Jimenez
+[2025-12-05 09:26:35] INFO - UserService - savingFiles - Guardant fitxers, el fitxer s'ha emmagatzemat en private/image
+[2025-12-05 09:26:35] INFO - UserService - uploadingImage - Afegint la imatge a la url private/image
+[2025-12-05 09:26:48] INFO - UserService - UploadingCsvUsers - Afegint 7 usuaris
+[2025-12-05 09:26:48] INFO - UserService - savingFiles - Guardant fitxers, el fitxer s'ha emmagatzemat en private/csv_processed
+[2025-12-05 09:26:56] INFO - UserService - uploadingJson - Afegint 3usuaris
+[2025-12-05 09:26:56] INFO - UserService - savingFiles - Guardant fitxers, el fitxer s'ha emmagatzemat en private/json_processed
+[2025-12-05 09:27:12] INFO - UserSerice - deletingUser - Esborrant l'usuari amb id: 4
+[2025-12-05 09:27:18] ERROR - UserSerice - deletingUser - No s'ha trobat cap usuari amb id: 4
+[2025-12-05 09:27:29] INFO - UserSerice - updatingName - Actualitzant l'usuari amb id: 1
+[2025-12-05 09:27:29] INFO - UserSerice - gettingAllUsers - Cercant l'usuari amb id 1
+[2025-12-05 09:27:53] INFO - UserService - gettingAllUsers - Cercant tots els usuaris...
+[2025-12-05 09:28:02] ERROR - UserSerice - gettingAllUsers - No s'ha trobat cap usuari amb id: 111
+[2025-12-05 09:28:10] INFO - UserSerice - gettingAllUsers - Cercant l'usuari amb id 11
